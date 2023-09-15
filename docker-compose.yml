@@ -5,6 +5,26 @@ networks:
     driver: bridge
 
 services:
+
+  # ============================= EUREKA =============================
+
+  eureka-service:
+    networks:
+      - mynetwork
+    restart: always
+    container_name: "eureka-service"
+    build:
+      context: ./eureka
+      dockerfile: Dockerfile
+    working_dir: /eureka
+    ports:
+      - "8761:8761"
+    volumes:
+      - "./eureka:/eureka"
+
+
+# ============================= USER SERVICE =============================
+
   user-service:
     networks:
       - mynetwork
@@ -24,33 +44,6 @@ services:
     environment:
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
 
-
-  eureka-service:
-    networks:
-      - mynetwork
-    restart: always
-    container_name: "eureka-service"
-    build:
-      context: ./eureka
-      dockerfile: Dockerfile
-    working_dir: /eureka
-    ports:
-      - "8761:8761"
-    volumes:
-      - "./eureka:/eureka"
-
-#  haproxy:
-#    restart: always
-#    container_name: "boilerplate-haproxy"
-#    image: haproxy:2.8.0
-#    ports:
-#      - 80:80
-#    volumes:
-#      - ./haproxyHttp.cfg:/usr/local/etc/haproxy/haproxy.cfg
-#    depends_on:
-#      - boilerplate-angular
-#      - boilerplate-backend
-
   user-db:
     networks:
       - mynetwork
@@ -60,7 +53,39 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: mydatabase
+    volumes:
+      - ./initdb:/docker-entrypoint-initdb.d
+
+
+  # ============================= POST SERVICE =============================
+
+  post-service:
+    networks:
+      - mynetwork
+    restart: always
+    container_name: "post-service"
+    build:
+      context: ./post-service
+      dockerfile: Dockerfile
+    working_dir: /post-service
     ports:
-      - "5432:5432"
+      - "8082:8080"
+    volumes:
+      - "./post-service:/post-service"
+    depends_on:
+      - post-db
+      - eureka-service
+    environment:
+      eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
+
+  post-db:
+    networks:
+      - mynetwork
+    container_name: "post-db"
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: mydatabase
     volumes:
       - ./initdb:/docker-entrypoint-initdb.d
