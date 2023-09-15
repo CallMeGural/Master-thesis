@@ -1,24 +1,34 @@
 package pl.gornicki.userservice.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.gornicki.userservice.security.AuthRequest;
-import pl.gornicki.userservice.security.AuthResponse;
-import pl.gornicki.userservice.security.RegisterRequest;
-import pl.gornicki.userservice.security.RegisterResponse;
+import pl.gornicki.userservice.UserRepository;
+import pl.gornicki.userservice.model.User;
+import pl.gornicki.userservice.security.*;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
+    private final UserRepository userRepository;
+    private final SecurityConfig config;
+
     public RegisterResponse register(RegisterRequest request) {
-        throw new RuntimeException("NOT IMPLEMENTED YET");
+        if(userRepository.findByEmail(request.email()).isPresent()) throw new RuntimeException("Email already taken");
+        User user = User.builder()
+                .email(request.email())
+                .password(config.encoder().encode(request.password()))
+                .username(request.username())
+                .build();
+        userRepository.save(user);
+        return new RegisterResponse("User "+request.username()+" registered successfully!");
     }
 
     public AuthResponse authorize(AuthRequest request) {
-        throw new RuntimeException("NOT IMPLEMENTED YET");
-    }
-
-    public AuthResponse refreshAccessToken(String authHeader) {
-        throw new RuntimeException("NOT IMPLEMENTED YET");
+        User user = userRepository.findByEmail(request.email()).orElseThrow(() -> new RuntimeException("User not found"));
+        if(config.encoder().matches(request.password(),user.getPassword()))
+            return new AuthResponse(user.getId());
+        throw new RuntimeException("Wrong credentials");
     }
 }

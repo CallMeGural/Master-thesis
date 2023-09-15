@@ -1,4 +1,6 @@
 package pl.gornicki.userservice.security;
 
-public record AuthResponse(String id, String accessToken, String refreshToken) {
+import java.util.UUID;
+
+public record AuthResponse(UUID userId) {
 }
