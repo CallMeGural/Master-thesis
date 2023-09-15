@@ -1,0 +1,22 @@
+version: "3.1"
+
+networks:
+  mynetwork:
+    driver: bridge
+
+services:
+  user-service:
+    networks:
+      - mynetwork
+    restart: always
+    container_name: "user-service"
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    working_dir: /user-service
+    ports:
+      - "8083:8080"
+    volumes:
+      - "./user-service:/user-service"
+    environment:
+      eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
