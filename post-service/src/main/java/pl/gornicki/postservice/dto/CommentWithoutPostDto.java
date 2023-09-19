@@ -5,15 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostWithUserDto {
-    private String title;
+public class CommentWithoutPostDto {
     private String content;
-    private String username;
-    private List<CommentWithoutPostDto> comments;
+    private UUID userId;
 }

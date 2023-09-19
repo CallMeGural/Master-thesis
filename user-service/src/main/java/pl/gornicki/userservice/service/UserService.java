@@ -39,6 +39,6 @@ public class UserService {
 
     private void deleteUserPostAndComments(UUID userId) {
         config.restTemplate().delete(URI.create(URL + "/posts/users/" + userId));
-        config.restTemplate().delete(URI.create(URL + "/comments/users/" + userId));
+//        config.restTemplate().delete(URI.create(URL + "/comments/users/" + userId));
     }
 }

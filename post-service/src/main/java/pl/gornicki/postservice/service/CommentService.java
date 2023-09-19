@@ -1,5 +1,6 @@
 package pl.gornicki.postservice.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,13 +22,13 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final Config config;
-    private final String URL = "http://localhost:8080/users";
+    private final String URL = "http://user-service:8080/users";
 
     public CommentDto addNewComment(CommentDto dto) {
 
         ResponseEntity<UserResponseDto> response = retrieveUserFromUserService(dto.getUserId());
         if(response.getBody()!=null) {
-            Post post = postRepository.findPostById(dto.getPostId())
+            Post post = postRepository.findById(dto.getPostId())
                     .orElseThrow(() -> new RuntimeException("Post does not exist"));
             Comment comment = Comment.builder()
                     .post(post)
@@ -58,6 +59,7 @@ public class CommentService {
         commentRepository.deleteById(commentId);
     }
 
+    @Transactional
     public void deleteAllCommentsByUserId(UUID userId) {
         commentRepository.deleteAllByUserId(userId);
     }

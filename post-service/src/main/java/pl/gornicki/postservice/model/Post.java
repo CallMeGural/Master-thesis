@@ -19,7 +19,7 @@ public class Post {
     private UUID id;
     private String title;
     private String content;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post")
     private List<Comment> comments;
     private UUID userId;
     private LocalDateTime createdAt;

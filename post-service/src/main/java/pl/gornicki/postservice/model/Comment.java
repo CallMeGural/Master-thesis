@@ -18,6 +18,7 @@ public class Comment {
     private UUID id;
     private String content;
     @ManyToOne
+    @JoinColumn(name = "post_id",nullable = false)
     private Post post;
     private UUID userId;
     private LocalDateTime createdAt;
