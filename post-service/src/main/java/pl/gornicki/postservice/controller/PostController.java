@@ -32,4 +32,19 @@ public class PostController {
     public ResponseEntity<PostDto> addPost(@RequestBody PostDto dto) {
         return ResponseEntity.ok(postService.addPost(dto));
     }
+
+    @PutMapping
+    public ResponseEntity<PostDto> updatePost(@RequestBody PostDto dto) {
+        return ResponseEntity.ok(postService.updatePost(dto));
+    }
+
+    @DeleteMapping("/{postId}")
+    public void deletePost(@PathVariable UUID postId) {
+        postService.deletePost(postId);
+    }
+
+    @DeleteMapping("/users/{userId}")
+    public void deletePostsByUser(@PathVariable UUID userId) {
+        postService.deleteAllPostsByUser(userId);
+    }
 }

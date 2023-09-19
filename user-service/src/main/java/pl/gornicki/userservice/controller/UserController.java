@@ -26,6 +26,10 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(user));
     }
 
+    @DeleteMapping("/{userId}")
+    public void removeAccount(@PathVariable UUID userId) {
+        userService.deleteUserById(userId);
+    }
 
     private UserResponseDto mapToUserResponseDto(User user) {
         return new UserResponseDto(user.getId(),user.getUsername(),user.getEmail());

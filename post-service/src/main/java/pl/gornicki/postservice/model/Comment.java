@@ -1,11 +1,9 @@
 package pl.gornicki.postservice.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -13,6 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -21,5 +20,6 @@ public class Comment {
     @ManyToOne
     private Post post;
     private UUID userId;
-
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

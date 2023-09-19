@@ -3,6 +3,7 @@ package pl.gornicki.userservice.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -20,5 +21,7 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private byte[] avatar;
+    private LocalDateTime createdAt;
 
 }

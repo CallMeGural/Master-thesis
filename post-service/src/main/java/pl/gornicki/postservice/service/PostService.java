@@ -35,30 +35,20 @@ public class PostService {
         post.setNumberOfViews(post.getNumberOfViews()+1);
         postRepository.save(post);
 
-        ResponseEntity<UserResponseDto> response =
-                config.restTemplate()
-                        .getForEntity(
-                                URL+"/"+post.getUserId(),
-                                UserResponseDto.class
-                        );
+        ResponseEntity<UserResponseDto> response = retrieveUserFromUserService(post.getUserId());
         if(response.getBody()!=null)
             return new PostWithUserDto(
                     post.getTitle(),
                     post.getContent(),
-                    response.getBody().getUsername()
-                    ,post.getComments()
+                    response.getBody().getUsername(),
+                    post.getComments()
             );
         throw new RuntimeException("User not found");
     }
 
     public PostDto addPost(PostDto dto) {
 
-        ResponseEntity<UserResponseDto> response =
-                config.restTemplate()
-                        .getForEntity(
-                                URL+"/"+dto.getUserId(),
-                                UserResponseDto.class
-                        );
+        ResponseEntity<UserResponseDto> response = retrieveUserFromUserService(dto.getUserId());
 
         if(response.getBody()!=null) {
             Post post = Post.builder()
@@ -74,4 +64,36 @@ public class PostService {
         }
         throw new RuntimeException("User not found");
     }
+
+    public PostDto updatePost(PostDto dto) {
+        ResponseEntity<UserResponseDto> response = retrieveUserFromUserService(dto.getUserId());
+        if(response.getBody()!=null) {
+            Post postToUpdate = postRepository.findPostById(dto.getId())
+                    .orElseThrow(() -> new RuntimeException("Post not found"));
+            if(response.getBody().getId().equals(postToUpdate.getUserId())) {
+                postToUpdate.setTitle(dto.getTitle());
+                postToUpdate.setContent(dto.getContent());
+                postRepository.save(postToUpdate);
+            }
+            throw new RuntimeException("User has no permission to update this post");
+        }
+        throw new RuntimeException("User not found");
+    }
+
+    public void deletePost(UUID postId) {
+        postRepository.deleteById(postId);
+    }
+
+    public void deleteAllPostsByUser(UUID userId) {
+        postRepository.deleteAllByUserId(userId);
+    }
+
+    private ResponseEntity<UserResponseDto> retrieveUserFromUserService(UUID dto) {
+        return config.restTemplate()
+                .getForEntity(
+                        URL + "/" + dto,
+                        UserResponseDto.class
+                );
+    }
+
 }

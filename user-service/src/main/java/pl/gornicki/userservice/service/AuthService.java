@@ -1,9 +1,8 @@
 package pl.gornicki.userservice.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.gornicki.userservice.UserRepository;
+import pl.gornicki.userservice.repository.UserRepository;
 import pl.gornicki.userservice.model.User;
 import pl.gornicki.userservice.security.*;
 
