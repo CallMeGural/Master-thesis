@@ -39,22 +39,9 @@ services:
     volumes:
       - "./user-service:/user-service"
     depends_on:
-      - user-db
       - eureka-service
     environment:
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
-
-  user-db:
-    networks:
-      - mynetwork
-    container_name: "user-db"
-    image: postgres:13-alpine
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: mydatabase
-    volumes:
-      - ./initdb:/docker-entrypoint-initdb.d
 
 
   # ============================= POST SERVICE =============================
@@ -73,19 +60,6 @@ services:
     volumes:
       - "./post-service:/post-service"
     depends_on:
-      - post-db
       - eureka-service
     environment:
       eureka.client.service-url.defaultZone: http://eureka-service:8761/eureka
-
-  post-db:
-    networks:
-      - mynetwork
-    container_name: "post-db"
-    image: postgres:13-alpine
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: mydatabase
-    volumes:
-      - ./initdb:/docker-entrypoint-initdb.d
